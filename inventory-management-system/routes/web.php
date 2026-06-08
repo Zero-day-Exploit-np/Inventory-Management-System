@@ -21,12 +21,17 @@ Route::get('/dashboard', function () {
     $totalSuppliers = Supplier::count();
     $totalStock = Product::sum('stock');
     $lowStockProducts = Product::where('stock', '<=', 5)->get();
+    $inStock = Product::where('stock', '>', 5)->count();
+    $lowStock = Product::whereBetween('stock', [1, 5])->count();
+    $outOfStock = Product::where('stock', 0)->count();
     return view('dashboard', compact(
         'totalCategories',
         'totalProducts',
         'totalStock',
         'totalSuppliers',
-        'lowStockProducts'
+        'lowStockProducts',
+        'inStock',
+        'lowStock',
     ));
 })->middleware(['auth'])->name('dashboard');
 
