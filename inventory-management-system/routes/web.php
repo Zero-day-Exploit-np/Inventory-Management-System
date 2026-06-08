@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\ActivityLogController;
 use App\Models\Category;
 use App\Models\Product;
 use \App\Models\Supplier;
@@ -51,4 +52,16 @@ Route::resource('suppliers', SupplierController::class);
 Route::resource('purchases', PurchaseController::class);
 
 Route::resource('sales', SaleController::class);
+
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    Route::resource('categories', CategoryController::class);
+
+    Route::resource('suppliers', SupplierController::class);
+});
+
+
+Route::get('/activity-logs', [ActivityLogController::class, 'index'])
+    ->name('activity-logs.index');
+
 require __DIR__ . '/auth.php';

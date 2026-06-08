@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
+use App\Models\ActivityLog;
 
 class ProductController extends Controller
 {
@@ -39,7 +41,7 @@ class ProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        Product::create([
+        $product = Product::create([
             'category_id' => $request->category_id,
             'name' => $request->name,
             'sku' => $request->sku,
@@ -48,6 +50,12 @@ class ProductController extends Controller
             'stock' => $request->stock,
             'description' => $request->description,
             'image' => $imagePath,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Create Product',
+            'description' => 'Created product ' . $product->name,
         ]);
 
         return redirect()->route('products.index');
@@ -89,20 +97,32 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-
     public function update(Request $request, Product $product)
     {
+
+
+        $imagePath = $product->image;
+
+        if ($request->hasFile('image')) {
+
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            $imagePath = $request->file('image')
+                ->store('products', 'public');
+        }
+
         $product->update([
-            'name' => $request->name,
             'category_id' => $request->category_id,
+            'name' => $request->name,
             'sku' => $request->sku,
             'purchase_price' => $request->purchase_price,
             'selling_price' => $request->selling_price,
             'stock' => $request->stock,
             'description' => $request->description,
+            'image' => $imagePath,
         ]);
-
-        return redirect()->route('products.index');
     }
 
     /**
