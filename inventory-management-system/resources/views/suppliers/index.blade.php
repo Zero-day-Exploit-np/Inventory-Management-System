@@ -97,4 +97,11 @@
     </div>
 </div>
 
+
+
+{{ $suppliers->links() }}
+
+
+
+
 @endsection

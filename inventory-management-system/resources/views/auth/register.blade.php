@@ -122,5 +122,3 @@
 </body>
 
 </html>
-</form>
-</x-guest-layout>

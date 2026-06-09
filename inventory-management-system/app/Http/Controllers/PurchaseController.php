@@ -9,76 +9,41 @@ use App\Models\Product;
 
 class PurchaseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $purchases = Purchase::with(['supplier', 'product'])->latest()->get();
+        $purchases = Purchase::with(['supplier', 'product'])
+            ->latest()
+            ->paginate(15);
 
         return view('purchases.index', compact('purchases'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        $suppliers = Supplier::all();
-        $products = Product::all();
-
-        return view('purchases.create', compact('suppliers', 'products'));
+        return view('purchases.create', [
+            'suppliers' => Supplier::select('id', 'name')->get(),
+            'products' => Product::select('id', 'name', 'stock')->get()
+        ]);
     }
+
     public function store(Request $request)
     {
-        Purchase::create([
-            'supplier_id' => $request->supplier_id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-            'purchase_price' => $request->purchase_price,
-            'purchase_date' => $request->purchase_date,
+        $request->validate([
+            'supplier_id' => 'required|exists:suppliers,id',
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'purchase_price' => 'required|numeric|min:0',
+            'purchase_date' => 'required|date',
         ]);
 
+        // Create purchase
+        Purchase::create($request->all());
+
+        // Update stock (IMPORTANT - REAL POS LOGIC)
         $product = Product::findOrFail($request->product_id);
+        $product->increment('stock', $request->quantity);
 
-        $product->stock += $request->quantity;
-
-        $product->save();
-
-        return redirect()->route('products.index');
-    }
-
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Purchase $purchase)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Purchase $purchase)
-    {
-        //
+        return redirect()->route('purchases.index')
+            ->with('success', 'Purchase added successfully');
     }
 }
