@@ -48,20 +48,23 @@ Route::resource('categories', CategoryController::class);
 Route::resource('products', ProductController::class);
 
 
-Route::resource('suppliers', SupplierController::class);
 Route::resource('purchases', PurchaseController::class);
 
 Route::resource('sales', SaleController::class);
 
+Route::middleware(['auth'])->group(function () {
+
+    Route::resource('suppliers', SupplierController::class);
+});
+
 Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::resource('categories', CategoryController::class);
-
-    Route::resource('suppliers', SupplierController::class);
 });
 
 
 Route::get('/activity-logs', [ActivityLogController::class, 'index'])
     ->name('activity-logs.index');
+Route::get('/sales/{sale}/invoice', [SaleController::class, 'invoice'])->name('sales.invoice');
 
 require __DIR__ . '/auth.php';

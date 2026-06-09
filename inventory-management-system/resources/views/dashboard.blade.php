@@ -155,6 +155,13 @@
                     <a href="{{ route('suppliers.create') }}" class="btn btn-outline-info">
                         <i class="bi bi-people me-2"></i>Add Supplier
                     </a>
+
+                    @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('categories.index') }}" class="btn btn-outline-info">
+                        <i class="bi bi-tags me-2"></i> Categories
+                    </a>
+                    </li>
+                    @endif
                 </div>
             </div>
         </div>

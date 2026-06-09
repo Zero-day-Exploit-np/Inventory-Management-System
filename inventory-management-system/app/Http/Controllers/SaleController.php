@@ -5,29 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Sale;
 use Illuminate\Http\Request;
 use App\Models\Product;
-
+use PDF;
 
 class SaleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
 
-
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $products = Product::all();
+
+        return view('sales.create', compact('products'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        $request->validate([
+            'product_id'     => 'required|exists:products,id',
+            'quantity'       => 'required|integer|min:1',
+            'selling_price'  => 'required|numeric|min:0',
+            'sale_date'      => 'required|date',
+        ]);
+
         $product = Product::findOrFail($request->product_id);
 
         // Check stock availability
@@ -39,50 +37,57 @@ class SaleController extends Controller
         $product->stock -= $request->quantity;
         $product->save();
 
-        // Save sale record
+        // Save sale record (no profit calculation here)
         Sale::create([
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
+            'product_id'    => $request->product_id,
+            'quantity'      => $request->quantity,
             'selling_price' => $request->selling_price,
-            'sale_date' => $request->sale_date,
+            'sale_date'     => $request->sale_date,
         ]);
 
         return redirect()->route('sales.index');
     }
-    /**
-     * Display the specified resource.
-     */
+
+    public function index(Request $request)
+    {
+        $query = Sale::with('product');
+
+        if ($request->search) {
+            $query->whereHas('product', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $sales = $query->latest()->paginate(10);
+
+        return view('sales.index', compact('sales'));
+    }
     public function show(Sale $sale)
     {
         //
     }
-    public function index()
-    {
-        $sales = Sale::with('product')->latest()->get();
 
-        return view('sales.index', compact('sales'));
-    }
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Sale $sale)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Sale $sale)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Sale $sale)
     {
         //
+    }
+
+    public function invoice(Sale $sale)
+    {
+        $sale->load('product');
+
+        $pdf = PDF::loadView('sales.invoice', compact('sale'));
+
+        return $pdf->download('invoice-' . $sale->id . '.pdf');
     }
 }

@@ -40,9 +40,9 @@
                     <label class="form-label">Sale Price (₹)</label>
                     <div class="input-group">
                         <span class="input-group-text">₹</span>
-                        <input type="number" step="0.01" name="sale_price" value="{{ old('sale_price') }}" class="form-control @error('sale_price') is-invalid @enderror" required>
+                        <input type="number" step="0.01" name="selling_price" value="{{ old('selling_price') }}" class="form-control @error('selling_price') is-invalid @enderror" required>
                     </div>
-                    @error('sale_price')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                    @error('selling_price')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="col-md-6">
