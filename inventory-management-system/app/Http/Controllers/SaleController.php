@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use PDF;
 
+
 class SaleController extends Controller
 {
 
@@ -16,6 +17,38 @@ class SaleController extends Controller
 
         return view('sales.create', compact('products'));
     }
+
+    // public function store(Request $request)
+    // {
+    //     $request->validate([
+    //         'product_id'     => 'required|exists:products,id',
+    //         'quantity'       => 'required|integer|min:1',
+    //         'selling_price'  => 'required|numeric|min:0',
+    //         'sale_date'      => 'required|date',
+    //     ]);
+
+    //     $product = Product::findOrFail($request->product_id);
+
+    //     // Check stock availability
+    //     if ($product->stock < $request->quantity) {
+    //         return back()->with('error', 'Not enough stock available.');
+    //     }
+
+    //     // Save sale first
+    //     Sale::create([
+    //         'product_id'    => $request->product_id,
+    //         'quantity'      => $request->quantity,
+    //         'selling_price' => $request->selling_price,
+    //         'sale_date'     => $request->sale_date,
+    //     ]);
+
+    //     // Reduce stock ONCE
+    //     $product->stock -= $request->quantity;
+    //     $product->save();
+
+    //     return redirect()->route('sales.index');
+    // }
+
 
     public function store(Request $request)
     {
@@ -28,16 +61,14 @@ class SaleController extends Controller
 
         $product = Product::findOrFail($request->product_id);
 
-        // Check stock availability
         if ($product->stock < $request->quantity) {
             return back()->with('error', 'Not enough stock available.');
         }
 
-        // Reduce stock
+        // reduce stock ONLY ONCE
         $product->stock -= $request->quantity;
         $product->save();
 
-        // Save sale record (no profit calculation here)
         Sale::create([
             'product_id'    => $request->product_id,
             'quantity'      => $request->quantity,
@@ -47,6 +78,8 @@ class SaleController extends Controller
 
         return redirect()->route('sales.index');
     }
+
+
 
     public function index(Request $request)
     {

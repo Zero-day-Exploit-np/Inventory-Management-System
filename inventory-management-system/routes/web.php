@@ -8,6 +8,7 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\ActivityLogController;
+use App\Http\Controllers\DashboardController;
 use App\Models\Category;
 use App\Models\Product;
 use \App\Models\Supplier;
@@ -66,5 +67,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::get('/activity-logs', [ActivityLogController::class, 'index'])
     ->name('activity-logs.index');
 Route::get('/sales/{sale}/invoice', [SaleController::class, 'invoice'])->name('sales.invoice');
+Route::get('/dashboard/profit', [DashboardController::class, 'profit']);
 
 require __DIR__ . '/auth.php';

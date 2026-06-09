@@ -83,10 +83,10 @@
                         <td class="text-end">
                             ₹ {{ number_format($sale->selling_price, 2) }}
                         </td>
-
-                        <td class="text-end fw-bold">
-                            ₹ {{ number_format($sale->quantity * $sale->selling_price, 2) }}
+                        <td class="text-end text-success">
+                            ₹ {{ number_format(($sale->selling_price - $sale->product->cost_price) * $sale->quantity, 2) }}
                         </td>
+                      
 
                         <td class="text-end text-success">
                             ₹ {{ number_format($sale->profit ?? 0, 2) }}
