@@ -51,7 +51,6 @@ Route::resource('products', ProductController::class);
 
 Route::resource('purchases', PurchaseController::class);
 
-Route::resource('sales', SaleController::class);
 
 Route::middleware(['auth'])->group(function () {
 
@@ -64,9 +63,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 
 
+Route::get('/dashboard/profit', [DashboardController::class, 'profit'])
+    ->name('dashboard.profit');
+
+Route::resource('sales', SaleController::class);
 Route::get('/activity-logs', [ActivityLogController::class, 'index'])
     ->name('activity-logs.index');
 Route::get('/sales/{sale}/invoice', [SaleController::class, 'invoice'])->name('sales.invoice');
-Route::get('/dashboard/profit', [DashboardController::class, 'profit']);
 
 require __DIR__ . '/auth.php';

@@ -3,7 +3,6 @@
 @section('content')
 
 <div class="container">
-
     <h3 class="mb-4">Profit Dashboard</h3>
 
     <div class="row">
@@ -35,11 +34,9 @@
         <h5>Last 7 Days Profit</h5>
         <canvas id="profitChart"></canvas>
     </div>
-
 </div>
 
 @endsection
-
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

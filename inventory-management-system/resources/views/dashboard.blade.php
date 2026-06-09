@@ -155,13 +155,22 @@
                     <a href="{{ route('suppliers.create') }}" class="btn btn-outline-info">
                         <i class="bi bi-people me-2"></i>Add Supplier
                     </a>
+                    <a href="{{ route('sales.index') }}" class="btn btn-outline-dark">
+                        <i class="bi bi-list"></i> Sales List
+                    </a>
+
+                    <a href="{{ route('dashboard.profit') }}" class="btn btn-outline-info">
+                        <i class="bi bi-graph-up"></i> Profit Analytics
+                    </a>
+
 
 
                     @if(auth()->user()->role === 'admin')
                     <a href="{{ route('categories.index') }}" class="btn btn-outline-info">
                         <i class="bi bi-tags me-2"></i> Categories
                     </a>
-                    </li>
+
+
                     @endif
                 </div>
             </div>

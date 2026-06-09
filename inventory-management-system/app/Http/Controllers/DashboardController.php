@@ -9,9 +9,10 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
+
     public function profit()
     {
-        // DAILY PROFIT (today)
+        // DAILY PROFIT
         $dailyProfit = Sale::with('product')
             ->whereDate('created_at', Carbon::today())
             ->get()
@@ -20,7 +21,7 @@ class DashboardController extends Controller
                     * $sale->quantity;
             });
 
-        // MONTHLY PROFIT (current month)
+        // MONTHLY PROFIT
         $monthlyProfit = Sale::with('product')
             ->whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
@@ -30,7 +31,7 @@ class DashboardController extends Controller
                     * $sale->quantity;
             });
 
-        // TOTAL PROFIT (all time)
+        // TOTAL PROFIT
         $totalProfit = Sale::with('product')
             ->get()
             ->sum(function ($sale) {
@@ -38,12 +39,7 @@ class DashboardController extends Controller
                     * $sale->quantity;
             });
 
-        return view('dashboard.profit', compact(
-            'dailyProfit',
-            'monthlyProfit',
-            'totalProfit'
-        ));
-
+        // 📊 DAILY CHART (LAST 7 DAYS)
         $dailyChart = [];
 
         for ($i = 6; $i >= 0; $i--) {
@@ -62,12 +58,13 @@ class DashboardController extends Controller
                 'date' => $date->format('d M'),
                 'profit' => $profit
             ];
-            return view('dashboard.profit', compact(
-                'dailyProfit',
-                'monthlyProfit',
-                'totalProfit',
-                'dailyChart'
-            ));
         }
+
+        return view('dashboard.profit', compact(
+            'dailyProfit',
+            'monthlyProfit',
+            'totalProfit',
+            'dailyChart'
+        ));
     }
 }
