@@ -70,8 +70,9 @@ npm install
 cp .env.example .env
 php artisan key:generate
 
+---
+
 ## License
 
 This project is licensed under the MIT License.
-
 Copyright (c) 2026 Bikram Kumar Das
